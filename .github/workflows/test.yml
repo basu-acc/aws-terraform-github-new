@@ -1,4 +1,4 @@
-name: AWS OIDC Deployment
+name: create s3 bucket
 
 on:
   push:
@@ -14,6 +14,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: setup terraform 
+        uses: hashicorp/setup-terraform@v3
+
+
       
       - name: Configure AWS credentials using OIDC
         uses: aws-actions/configure-aws-credentials@v4
@@ -21,9 +27,20 @@ jobs:
           role-to-assume: arn:aws:iam::730335466026:role/new-github-role
           aws-region: us-east-1
           
-      - name: list S3 Buckets
+      - name: initialize terraform
+        run: terraform init
+        working-directory: terraform
+
+      - name: plan terraofrm
         env: 
-            aws-region: us-east-1
+            BUCKET_NAME: ${{ secrets.BUCKET_NAME}}
         run: |
-          echo "Printing s3 buckets updated"
-          aws s3 ls
+          terraform plan \
+           -var="bucket_name=$BUCKET_NAME"
+        working-directory: terraform
+
+      - name: apply terraofrm
+        env:
+            TF_VAR_bucket_name: ${{ secrets.BUCKET_NAME}}
+        run: terraform apply -auto-approve
+        working-directory: terraform
