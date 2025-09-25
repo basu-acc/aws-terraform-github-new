@@ -25,5 +25,5 @@ jobs:
         env: 
             aws-region: us-east-1
         run: |
-          echo "Printing s3 buckets"
+          echo "Printing s3 buckets updated"
           aws s3 ls
