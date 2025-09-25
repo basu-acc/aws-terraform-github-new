@@ -24,6 +24,8 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           
       - name: list S3 Buckets
+        env: 
+            AWS-REGION: ${{ secrets.AWS_REGION }}
         run: |
           echo "Printing s3 buckets"
           aws s3 ls
