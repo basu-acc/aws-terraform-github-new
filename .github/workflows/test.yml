@@ -1,4 +1,4 @@
-name: Deploy Workflow
+name: AWS OIDC Deployment
 
 on:
   push:
@@ -6,9 +6,24 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
-  say-hello:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Print Hello Message
-        run: echo "hello world"
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.IAM_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          
+      - name: list S3 Buckets
+        run: |
+          echo "Printing s3 buckets"
+          aws s3 ls
