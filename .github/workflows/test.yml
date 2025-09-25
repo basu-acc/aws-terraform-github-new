@@ -14,18 +14,16 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
+      
       - name: Configure AWS credentials using OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.IAM_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: arn:aws:iam::730335466026:oidc-provider/token.actions.githubusercontent.com
+          aws-region: us-east-1
           
       - name: list S3 Buckets
         env: 
-            AWS-REGION: ${{ secrets.AWS_REGION }}
+            AWS-REGION: us-east-1
         run: |
           echo "Printing s3 buckets"
           aws s3 ls
